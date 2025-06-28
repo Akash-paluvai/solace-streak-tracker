@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,28 +16,38 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signIn, user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate login API call
     try {
-      console.log("Login attempt:", { email, password });
+      const { error } = await signIn(email, password);
       
-      // Simulate delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Welcome back! 👋",
-        description: "You've successfully logged in to MindMate",
-      });
-      
-      navigate("/dashboard");
+      if (error) {
+        toast({
+          title: "Login failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Welcome back! 👋",
+          description: "You've successfully logged in to MindMate",
+        });
+        navigate("/dashboard");
+      }
     } catch (error) {
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again",
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
     } finally {

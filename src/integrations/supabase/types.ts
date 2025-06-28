@@ -9,7 +9,147 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      ai_suggestions: {
+        Row: {
+          generated_at: string
+          id: string
+          suggestion_text: string
+          suggestion_type: string
+          user_id: string
+        }
+        Insert: {
+          generated_at?: string
+          id?: string
+          suggestion_text: string
+          suggestion_type: string
+          user_id: string
+        }
+        Update: {
+          generated_at?: string
+          id?: string
+          suggestion_text?: string
+          suggestion_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chat_history: {
+        Row: {
+          id: string
+          message_text: string
+          role: string
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          message_text: string
+          role: string
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          message_text?: string
+          role?: string
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mood_logs: {
+        Row: {
+          created_at: string
+          id: string
+          mood: string
+          note: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mood: string
+          note?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mood?: string
+          note?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      streaks: {
+        Row: {
+          current_streak: number
+          id: string
+          last_checkin: string | null
+          longest_streak: number
+          user_id: string
+        }
+        Insert: {
+          current_streak?: number
+          id?: string
+          last_checkin?: string | null
+          longest_streak?: number
+          user_id: string
+        }
+        Update: {
+          current_streak?: number
+          id?: string
+          last_checkin?: string | null
+          longest_streak?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      stress_logs: {
+        Row: {
+          created_at: string
+          id: string
+          stress_level: number
+          trigger_note: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          stress_level: number
+          trigger_note?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          stress_level?: number
+          trigger_note?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

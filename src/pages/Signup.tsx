@@ -8,6 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +22,13 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signUp, user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -49,21 +58,25 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      console.log("Signup attempt:", formData);
+      const { error } = await signUp(formData.email, formData.password, formData.name);
       
-      // Simulate signup API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: "Welcome to MindMate! 🎉",
-        description: "Your account has been created successfully",
-      });
-      
-      navigate("/mood-checkin");
+      if (error) {
+        toast({
+          title: "Signup failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Welcome to MindMate! 🎉",
+          description: "Please check your email to verify your account",
+        });
+        navigate("/login");
+      }
     } catch (error) {
       toast({
         title: "Signup failed",
-        description: "Something went wrong. Please try again",
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
     } finally {
