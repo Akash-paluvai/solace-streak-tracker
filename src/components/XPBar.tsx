@@ -1,6 +1,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { Star, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface XPBarProps {
   currentXP: number;

@@ -134,7 +134,7 @@ const Dashboard = () => {
               unit="days"
               icon={Calendar}
               trend="up"
-              glowColor="blue"
+              glowColor="cyan"
             />
             <StatCard
               title="Total Check-ins"
@@ -150,7 +150,7 @@ const Dashboard = () => {
               unit="%"
               icon={TrendingUp}
               trend="up"
-              glowColor="blue"
+              glowColor="cyan"
             />
             <StatCard
               title="Heart Rate"
@@ -158,7 +158,7 @@ const Dashboard = () => {
               unit="bpm"
               icon={Activity}
               trend="neutral"
-              glowColor="blue"
+              glowColor="cyan"
             />
             <StatCard
               title="Stress Level"
@@ -174,7 +174,7 @@ const Dashboard = () => {
               unit="%"
               icon={Shield}
               trend="up"
-              glowColor="blue"
+              glowColor="cyan"
             />
           </div>
         </div>
