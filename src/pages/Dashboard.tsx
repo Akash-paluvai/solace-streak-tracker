@@ -1,28 +1,27 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Heart, ArrowLeft, TrendingUp, Calendar, Zap, Star } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { HealthCore } from "@/components/HealthCore";
+import { XPBar } from "@/components/XPBar";
+import { StatCard } from "@/components/StatCard";
+import { QuestCard } from "@/components/QuestCard";
+import { Heart, ArrowLeft, TrendingUp, Calendar, Zap, Star, Activity, Brain, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
-  // Mock data
+  // Mock user data
   const userStats = {
+    level: 12,
+    currentXP: 340,
+    totalXP: 400,
     currentStreak: 7,
-    totalXP: 340,
-    level: 3,
-    xpToNextLevel: 60,
     totalCheckIns: 24,
-    badges: [
-      { name: "First Week", icon: "🏆", earned: true },
-      { name: "Consistent", icon: "📅", earned: true },
-      { name: "Mindful", icon: "🧘‍♀️", earned: false },
-      { name: "Resilient", icon: "💪", earned: false },
-    ],
+    mood: "happy"
   };
 
+  // Mock data
   const moodData = [
     { day: "Mon", mood: 3, stress: 6 },
     { day: "Tue", mood: 4, stress: 4 },
@@ -33,113 +32,168 @@ const Dashboard = () => {
     { day: "Sun", mood: 4, stress: 4 },
   ];
 
-  const recentActivities = [
-    { activity: "Deep Breathing", time: "2 hours ago", xp: 20 },
-    { activity: "Mood Check-in", time: "Today", xp: 10 },
-    { activity: "Gratitude Journal", time: "Yesterday", xp: 15 },
+  const dailyQuests = [
+    { title: "Morning Check-in", description: "Log your daily mood", xpReward: 10, completed: true },
+    { title: "Hydration Goal", description: "Drink 8 glasses of water", xpReward: 15, completed: false, progress: 5, total: 8 },
+    { title: "Mindful Moment", description: "Complete 5-minute meditation", xpReward: 20, completed: false, progress: 0, total: 1 },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      {/* Header */}
-      <header className="p-6 flex items-center justify-between">
-        <div className="flex items-center">
-          <Link to="/" className="flex items-center space-x-2 mr-4">
-            <ArrowLeft className="h-5 w-5 text-gray-600" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 digital-rain">
+      {/* Futuristic Header */}
+      <header className="p-6 flex items-center justify-between backdrop-blur-sm border-b border-primary/10">
+        <div className="flex items-center space-x-4">
+          <Link to="/" className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors">
+            <ArrowLeft className="h-5 w-5" />
           </Link>
-          <div className="flex items-center space-x-2">
-            <Heart className="h-6 w-6 text-blue-600" />
-            <h1 className="text-xl font-bold text-gray-800">MindMate Dashboard</h1>
+          <div className="flex items-center space-x-3">
+            <HealthCore mood={userStats.mood} size="sm" />
+            <div>
+              <h1 className="text-xl font-orbitron font-bold neon-text">Command Center</h1>
+              <p className="text-xs text-muted-foreground">Level {userStats.level} Health Explorer</p>
+            </div>
           </div>
         </div>
-        <Link to="/mood-checkin">
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            New Check-in
-          </Button>
-        </Link>
+        
+        <div className="flex items-center space-x-4">
+          <div className="text-right">
+            <p className="text-sm font-mono text-muted-foreground">Online</p>
+            <div className="flex items-center space-x-1">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-xs text-green-400">Synced</span>
+            </div>
+          </div>
+          <ThemeToggle />
+          <Link to="/mood-checkin">
+            <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 glow-cyan font-orbitron">
+              <Zap className="mr-2 h-4 w-4" />
+              New Quest
+            </Button>
+          </Link>
+        </div>
       </header>
 
-      <div className="container mx-auto px-6 py-8 max-w-6xl">
+      <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Good morning! 🌅</h2>
-          <p className="text-gray-600">Here's how you're doing on your mental health journey</p>
+          <h2 className="text-4xl font-orbitron font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Welcome back, Explorer! 🚀
+          </h2>
+          <p className="text-muted-foreground font-exo">Your health quest continues with great progress</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{userStats.currentStreak} days</div>
-              <p className="text-xs text-muted-foreground">Keep it up!</p>
-            </CardContent>
-          </Card>
+        {/* XP Progress */}
+        <Card className="mb-8 bg-gradient-to-r from-primary/10 via-accent/10 to-secondary/10 backdrop-blur-sm border-2 border-primary/30 glow-cyan">
+          <CardContent className="p-6">
+            <XPBar currentXP={userStats.currentXP} totalXP={userStats.totalXP} level={userStats.level} />
+          </CardContent>
+        </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total XP</CardTitle>
-              <Zap className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{userStats.totalXP}</div>
-              <p className="text-xs text-muted-foreground">Level {userStats.level}</p>
-            </CardContent>
-          </Card>
+        <div className="grid lg:grid-cols-4 gap-6 mb-8">
+          {/* Health Core - Central Display */}
+          <div className="lg:col-span-1">
+            <Card className="bg-card/30 backdrop-blur-sm border-2 border-primary/30 glow-cyan h-fit">
+              <CardHeader>
+                <CardTitle className="font-orbitron text-center">Health Core</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center space-y-4">
+                <HealthCore mood={userStats.mood} size="lg" />
+                <div className="text-center">
+                  <p className="font-orbitron font-bold text-lg capitalize">{userStats.mood}</p>
+                  <p className="text-xs text-muted-foreground">Current State</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Check-ins</CardTitle>
-              <Heart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{userStats.totalCheckIns}</div>
-              <p className="text-xs text-muted-foreground">This month</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Progress</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">85%</div>
-              <p className="text-xs text-muted-foreground">To next level</p>
-            </CardContent>
-          </Card>
+          {/* Stats Grid */}
+          <div className="lg:col-span-3 grid md:grid-cols-3 gap-4">
+            <StatCard
+              title="Current Streak"
+              value={userStats.currentStreak}
+              unit="days"
+              icon={Calendar}
+              trend="up"
+              glowColor="cyan"
+            />
+            <StatCard
+              title="Total Check-ins"
+              value={userStats.totalCheckIns}
+              unit="this month"
+              icon={Heart}
+              trend="up"
+              glowColor="gold"
+            />
+            <StatCard
+              title="Wellness Score"
+              value="85"
+              unit="%"
+              icon={TrendingUp}
+              trend="up"
+              glowColor="purple"
+            />
+            <StatCard
+              title="Heart Rate"
+              value="72"
+              unit="bpm"
+              icon={Activity}
+              trend="neutral"
+              glowColor="green"
+            />
+            <StatCard
+              title="Stress Level"
+              value="3"
+              unit="/10"
+              icon={Brain}
+              trend="down"
+              glowColor="cyan"
+            />
+            <StatCard
+              title="Sleep Score"
+              value="92"
+              unit="%"
+              icon={Shield}
+              trend="up"
+              glowColor="gold"
+            />
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Mood Chart */}
+          {/* Mood Trends Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-card/30 backdrop-blur-sm border-2 border-primary/30 hover:glow-cyan transition-all">
               <CardHeader>
-                <CardTitle>Weekly Mood & Stress Trends</CardTitle>
+                <CardTitle className="font-orbitron">Neural Activity Patterns</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={moodData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="day" />
-                    <YAxis domain={[1, 10]} />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,255,255,0.1)" />
+                    <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
+                    <YAxis domain={[1, 10]} stroke="hsl(var(--muted-foreground))" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--card))', 
+                        border: '1px solid hsl(var(--primary))',
+                        borderRadius: '8px'
+                      }} 
+                    />
                     <Line 
                       type="monotone" 
                       dataKey="mood" 
-                      stroke="#3b82f6" 
+                      stroke="hsl(var(--primary))" 
                       strokeWidth={3}
                       name="Mood"
+                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="stress" 
-                      stroke="#ef4444" 
+                      stroke="hsl(var(--secondary))" 
                       strokeWidth={3}
                       name="Stress"
+                      dot={{ fill: 'hsl(var(--secondary))', strokeWidth: 2, r: 4 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -147,90 +201,42 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          {/* Level Progress & Badges */}
-          <div className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+          {/* Daily Quests */}
+          <div>
+            <Card className="bg-card/30 backdrop-blur-sm border-2 border-secondary/30 hover:glow-gold transition-all">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Star className="h-5 w-5 text-yellow-500" />
-                  <span>Level Progress</span>
+                <CardTitle className="font-orbitron flex items-center space-x-2">
+                  <Star className="h-5 w-5 text-secondary" />
+                  <span>Daily Quests</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between text-sm">
-                    <span>Level {userStats.level}</span>
-                    <span>{userStats.xpToNextLevel} XP to next level</span>
-                  </div>
-                  <Progress value={85} className="h-2" />
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">{userStats.totalXP}</div>
-                    <div className="text-sm text-gray-600">Total XP</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle>Badges</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-3">
-                  {userStats.badges.map((badge, index) => (
-                    <div
-                      key={index}
-                      className={`p-3 rounded-lg text-center ${
-                        badge.earned 
-                          ? "bg-yellow-50 border-2 border-yellow-200" 
-                          : "bg-gray-50 border-2 border-gray-200 opacity-50"
-                      }`}
-                    >
-                      <div className="text-2xl mb-1">{badge.icon}</div>
-                      <div className="text-xs font-medium">{badge.name}</div>
-                    </div>
-                  ))}
-                </div>
+              <CardContent className="space-y-4">
+                {dailyQuests.map((quest, index) => (
+                  <QuestCard key={index} {...quest} />
+                ))}
               </CardContent>
             </Card>
           </div>
         </div>
 
-        {/* Recent Activities */}
-        <Card className="mt-8 bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle>Recent Activities</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivities.map((activity, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <div className="font-medium">{activity.activity}</div>
-                    <div className="text-sm text-gray-600">{activity.time}</div>
-                  </div>
-                  <Badge variant="secondary">+{activity.xp} XP</Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Quick Actions */}
         <div className="mt-8 grid md:grid-cols-3 gap-4">
           <Link to="/suggestions">
-            <Button variant="outline" className="w-full h-16 text-lg">
-              Get Suggestions
+            <Button variant="outline" className="w-full h-16 text-lg neon-border bg-card/30 backdrop-blur-sm hover:glow-cyan transition-all font-exo">
+              <Brain className="mr-2 h-5 w-5" />
+              AI Suggestions
             </Button>
           </Link>
           <Link to="/analytics">
-            <Button variant="outline" className="w-full h-16 text-lg">
-              View Analytics
+            <Button variant="outline" className="w-full h-16 text-lg neon-border bg-card/30 backdrop-blur-sm hover:glow-gold transition-all font-exo">
+              <TrendingUp className="mr-2 h-5 w-5" />
+              Deep Analytics
             </Button>
           </Link>
-          <Link to="/chatbot">
-            <Button variant="outline" className="w-full h-16 text-lg">
-              Chat with AI
+          <Link to="/gamification">
+            <Button variant="outline" className="w-full h-16 text-lg neon-border bg-card/30 backdrop-blur-sm hover:glow-purple transition-all font-exo">
+              <Star className="mr-2 h-5 w-5" />
+              Achievements
             </Button>
           </Link>
         </div>
