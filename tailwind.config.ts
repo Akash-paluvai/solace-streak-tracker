@@ -67,7 +67,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Jarvis Theme Colors
+				'jarvis-blue': '#00BFFF',
+				'jarvis-gold': '#FFC700',
+				'jarvis-red': '#FF2D55',
+				'space-navy': '#050812',
+				'surface-panel': 'rgba(16, 24, 42, 0.75)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -91,12 +97,24 @@ export default {
 						height: '0'
 					}
 				},
-				'pulse-glow': {
+				'jarvis-pulse': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(0,255,255,0.2)'
+						boxShadow: '0 0 20px rgba(0,191,255,0.3)',
+						transform: 'scale(1)'
 					},
 					'50%': {
-						boxShadow: '0 0 30px rgba(0,255,255,0.6)'
+						boxShadow: '0 0 40px rgba(0,191,255,0.6)',
+						transform: 'scale(1.02)'
+					}
+				},
+				'health-core-pulse': {
+					'0%, 100%': {
+						transform: 'scale(1)',
+						filter: 'drop-shadow(0 0 20px rgba(0,191,255,0.6))'
+					},
+					'50%': {
+						transform: 'scale(1.05)',
+						filter: 'drop-shadow(0 0 40px rgba(0,191,255,0.9))'
 					}
 				},
 				'floating': {
@@ -107,23 +125,37 @@ export default {
 						transform: 'translateY(-10px)'
 					}
 				},
-				'health-pulse': {
+				'glow-intensity': {
 					'0%, 100%': {
-						transform: 'scale(1)',
-						filter: 'drop-shadow(0 0 20px rgba(0,255,255,0.6))'
+						boxShadow: '0 0 15px rgba(0,191,255,0.2)'
 					},
 					'50%': {
-						transform: 'scale(1.05)',
-						filter: 'drop-shadow(0 0 30px rgba(0,255,255,0.8))'
+						boxShadow: '0 0 30px rgba(0,191,255,0.5)'
+					}
+				},
+				'level-up-burst': {
+					'0%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					},
+					'50%': {
+						transform: 'scale(1.2)',
+						opacity: '0.8'
+					},
+					'100%': {
+						transform: 'scale(1.5)',
+						opacity: '0'
 					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite alternate',
+				'jarvis-pulse': 'jarvis-pulse 2s ease-in-out infinite',
+				'health-core-pulse': 'health-core-pulse 2.5s ease-in-out infinite',
 				'floating': 'floating 3s ease-in-out infinite',
-				'health-pulse': 'health-pulse 2s ease-in-out infinite'
+				'glow-intensity': 'glow-intensity 2s ease-in-out infinite alternate',
+				'level-up-burst': 'level-up-burst 0.6s ease-out'
 			}
 		}
 	},

@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,30 +7,32 @@ import { HealthCore } from "@/components/HealthCore";
 import { XPBar } from "@/components/XPBar";
 import { StatCard } from "@/components/StatCard";
 import { QuestCard } from "@/components/QuestCard";
-import { Heart, ArrowLeft, TrendingUp, Calendar, Zap, Star, Activity, Brain, Shield } from "lucide-react";
+import { Heart, ArrowLeft, TrendingUp, Calendar, Zap, Star, Activity, Brain, Shield, Wifi, WifiOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
-  // Mock user data
+  // Mock user data with Jarvis theme
   const userStats = {
     level: 12,
     currentXP: 340,
     totalXP: 400,
     currentStreak: 7,
     totalCheckIns: 24,
-    mood: "happy"
+    mood: "happy",
+    heartRate: 72,
+    isOnline: true
   };
 
-  // Mock data
+  // Mock health data
   const moodData = [
-    { day: "Mon", mood: 3, stress: 6 },
-    { day: "Tue", mood: 4, stress: 4 },
-    { day: "Wed", mood: 3, stress: 7 },
-    { day: "Thu", mood: 5, stress: 3 },
-    { day: "Fri", mood: 4, stress: 5 },
-    { day: "Sat", mood: 5, stress: 2 },
-    { day: "Sun", mood: 4, stress: 4 },
+    { day: "Mon", mood: 3, stress: 6, heartRate: 68 },
+    { day: "Tue", mood: 4, stress: 4, heartRate: 71 },
+    { day: "Wed", mood: 3, stress: 7, heartRate: 75 },
+    { day: "Thu", mood: 5, stress: 3, heartRate: 69 },
+    { day: "Fri", mood: 4, stress: 5, heartRate: 73 },
+    { day: "Sat", mood: 5, stress: 2, heartRate: 65 },
+    { day: "Sun", mood: 4, stress: 4, heartRate: 72 },
   ];
 
   const dailyQuests = [
@@ -39,17 +42,17 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 digital-rain">
-      {/* Futuristic Header */}
-      <header className="p-6 flex items-center justify-between backdrop-blur-sm border-b border-primary/10">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 hud-grid">
+      {/* Jarvis Header */}
+      <header className="p-6 flex items-center justify-between backdrop-blur-sm border-b border-primary/10 surface-panel">
         <div className="flex items-center space-x-4">
-          <Link to="/" className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors">
+          <Link to="/" className="flex items-center space-x-2 text-muted-foreground hover:text-jarvis-blue transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div className="flex items-center space-x-3">
-            <HealthCore mood={userStats.mood} size="sm" />
+            <HealthCore mood={userStats.mood} size="sm" heartRate={userStats.heartRate} />
             <div>
-              <h1 className="text-xl font-orbitron font-bold neon-text">Command Center</h1>
+              <h1 className="text-xl font-orbitron font-bold jarvis-text">Command Center</h1>
               <p className="text-xs text-muted-foreground">Level {userStats.level} Health Explorer</p>
             </div>
           </div>
@@ -57,15 +60,29 @@ const Dashboard = () => {
         
         <div className="flex items-center space-x-4">
           <div className="text-right">
-            <p className="text-sm font-mono text-muted-foreground">Online</p>
+            <div className="flex items-center space-x-2">
+              {userStats.isOnline ? (
+                <>
+                  <Wifi className="w-4 h-4 text-jarvis-blue" />
+                  <span className="text-sm font-mono text-jarvis-blue">Online</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="w-4 h-4 text-jarvis-red" />
+                  <span className="text-sm font-mono text-jarvis-red">Offline</span>
+                </>
+              )}
+            </div>
             <div className="flex items-center space-x-1">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-xs text-green-400">Synced</span>
+              <div className={`w-2 h-2 rounded-full animate-pulse ${userStats.isOnline ? 'bg-jarvis-blue' : 'bg-jarvis-red'}`}></div>
+              <span className="text-xs text-muted-foreground">
+                {userStats.isOnline ? 'Synced' : 'Sync Pending'}
+              </span>
             </div>
           </div>
           <ThemeToggle />
           <Link to="/mood-checkin">
-            <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 glow-cyan font-orbitron">
+            <Button className="bg-gradient-to-r from-primary to-secondary hover:from-primary/80 hover:to-secondary/80 jarvis-glow-blue font-orbitron">
               <Zap className="mr-2 h-4 w-4" />
               New Quest
             </Button>
@@ -76,14 +93,14 @@ const Dashboard = () => {
       <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-4xl font-orbitron font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h2 className="text-4xl font-orbitron font-bold mb-2 bg-gradient-to-r from-jarvis-blue to-jarvis-gold bg-clip-text text-transparent">
             Welcome back, Explorer! 🚀
           </h2>
           <p className="text-muted-foreground font-exo">Your health quest continues with great progress</p>
         </div>
 
         {/* XP Progress */}
-        <Card className="mb-8 bg-gradient-to-r from-primary/10 via-accent/10 to-secondary/10 backdrop-blur-sm border-2 border-primary/30 glow-cyan">
+        <Card className="mb-8 jarvis-card border-2 border-primary/30 jarvis-glow-blue">
           <CardContent className="p-6">
             <XPBar currentXP={userStats.currentXP} totalXP={userStats.totalXP} level={userStats.level} />
           </CardContent>
@@ -92,15 +109,18 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-4 gap-6 mb-8">
           {/* Health Core - Central Display */}
           <div className="lg:col-span-1">
-            <Card className="bg-card/30 backdrop-blur-sm border-2 border-primary/30 glow-cyan h-fit">
+            <Card className="jarvis-card border-2 border-primary/30 jarvis-glow-blue h-fit">
               <CardHeader>
                 <CardTitle className="font-orbitron text-center">Health Core</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col items-center space-y-4">
-                <HealthCore mood={userStats.mood} size="lg" />
+                <HealthCore mood={userStats.mood} size="lg" heartRate={userStats.heartRate} />
                 <div className="text-center">
-                  <p className="font-orbitron font-bold text-lg capitalize">{userStats.mood}</p>
+                  <p className="font-orbitron font-bold text-lg capitalize jarvis-text">{userStats.mood}</p>
                   <p className="text-xs text-muted-foreground">Current State</p>
+                  <div className="mt-2">
+                    <span className="stat-display">{userStats.heartRate} BPM</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -114,7 +134,7 @@ const Dashboard = () => {
               unit="days"
               icon={Calendar}
               trend="up"
-              glowColor="cyan"
+              glowColor="blue"
             />
             <StatCard
               title="Total Check-ins"
@@ -130,7 +150,7 @@ const Dashboard = () => {
               unit="%"
               icon={TrendingUp}
               trend="up"
-              glowColor="purple"
+              glowColor="blue"
             />
             <StatCard
               title="Heart Rate"
@@ -138,7 +158,7 @@ const Dashboard = () => {
               unit="bpm"
               icon={Activity}
               trend="neutral"
-              glowColor="green"
+              glowColor="blue"
             />
             <StatCard
               title="Stress Level"
@@ -146,7 +166,7 @@ const Dashboard = () => {
               unit="/10"
               icon={Brain}
               trend="down"
-              glowColor="cyan"
+              glowColor="gold"
             />
             <StatCard
               title="Sleep Score"
@@ -154,46 +174,55 @@ const Dashboard = () => {
               unit="%"
               icon={Shield}
               trend="up"
-              glowColor="gold"
+              glowColor="blue"
             />
           </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Mood Trends Chart */}
+          {/* Neural Activity Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-card/30 backdrop-blur-sm border-2 border-primary/30 hover:glow-cyan transition-all">
+            <Card className="jarvis-card border-2 border-primary/30 hover:jarvis-glow-blue transition-all">
               <CardHeader>
                 <CardTitle className="font-orbitron">Neural Activity Patterns</CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={moodData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,255,255,0.1)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,191,255,0.1)" />
                     <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" />
                     <YAxis domain={[1, 10]} stroke="hsl(var(--muted-foreground))" />
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '1px solid hsl(var(--primary))',
-                        borderRadius: '8px'
+                        backgroundColor: 'rgba(16, 24, 42, 0.9)', 
+                        border: '1px solid rgba(0,191,255,0.3)',
+                        borderRadius: '8px',
+                        backdropFilter: 'blur(8px)'
                       }} 
                     />
                     <Line 
                       type="monotone" 
                       dataKey="mood" 
-                      stroke="hsl(var(--primary))" 
+                      stroke="#00BFFF" 
                       strokeWidth={3}
                       name="Mood"
-                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
+                      dot={{ fill: '#00BFFF', strokeWidth: 2, r: 4 }}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="stress" 
-                      stroke="hsl(var(--secondary))" 
+                      stroke="#FFC700" 
                       strokeWidth={3}
                       name="Stress"
-                      dot={{ fill: 'hsl(var(--secondary))', strokeWidth: 2, r: 4 }}
+                      dot={{ fill: '#FFC700', strokeWidth: 2, r: 4 }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="heartRate" 
+                      stroke="#FF2D55" 
+                      strokeWidth={2}
+                      name="Heart Rate"
+                      dot={{ fill: '#FF2D55', strokeWidth: 2, r: 3 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -203,10 +232,10 @@ const Dashboard = () => {
 
           {/* Daily Quests */}
           <div>
-            <Card className="bg-card/30 backdrop-blur-sm border-2 border-secondary/30 hover:glow-gold transition-all">
+            <Card className="jarvis-card border-2 border-secondary/30 hover:jarvis-glow-gold transition-all">
               <CardHeader>
                 <CardTitle className="font-orbitron flex items-center space-x-2">
-                  <Star className="h-5 w-5 text-secondary" />
+                  <Star className="h-5 w-5 text-jarvis-gold" />
                   <span>Daily Quests</span>
                 </CardTitle>
               </CardHeader>
@@ -222,19 +251,19 @@ const Dashboard = () => {
         {/* Quick Actions */}
         <div className="mt-8 grid md:grid-cols-3 gap-4">
           <Link to="/suggestions">
-            <Button variant="outline" className="w-full h-16 text-lg neon-border bg-card/30 backdrop-blur-sm hover:glow-cyan transition-all font-exo">
+            <Button variant="outline" className="w-full h-16 text-lg jarvis-border bg-card/30 backdrop-blur-sm hover:jarvis-glow-blue transition-all font-exo">
               <Brain className="mr-2 h-5 w-5" />
               AI Suggestions
             </Button>
           </Link>
           <Link to="/analytics">
-            <Button variant="outline" className="w-full h-16 text-lg neon-border bg-card/30 backdrop-blur-sm hover:glow-gold transition-all font-exo">
+            <Button variant="outline" className="w-full h-16 text-lg jarvis-border bg-card/30 backdrop-blur-sm hover:jarvis-glow-gold transition-all font-exo">
               <TrendingUp className="mr-2 h-5 w-5" />
               Deep Analytics
             </Button>
           </Link>
           <Link to="/gamification">
-            <Button variant="outline" className="w-full h-16 text-lg neon-border bg-card/30 backdrop-blur-sm hover:glow-purple transition-all font-exo">
+            <Button variant="outline" className="w-full h-16 text-lg jarvis-border bg-card/30 backdrop-blur-sm hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all font-exo">
               <Star className="mr-2 h-5 w-5" />
               Achievements
             </Button>
