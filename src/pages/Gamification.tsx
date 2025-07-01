@@ -21,7 +21,6 @@ const Gamification = () => {
     nextRank: "Wellness Master"
   };
 
-  // Mock achievements data
   const achievements = [
     {
       id: 1,
@@ -101,7 +100,6 @@ const Gamification = () => {
     }
   ];
 
-  // Mock leaderboard data
   const leaderboard = [
     { rank: 1, name: "Alex Chen", level: 24, xp: 45200, avatar: "🧠" },
     { rank: 2, name: "Maria Santos", level: 22, xp: 41800, avatar: "⚡" },
@@ -110,7 +108,6 @@ const Gamification = () => {
     { rank: 5, name: "Emma Wilson", level: 10, xp: 12900, avatar: "✨" },
   ];
 
-  // Mock daily quests
   const dailyQuests = [
     {
       id: 1,
@@ -236,25 +233,29 @@ const Gamification = () => {
           </Card>
         </div>
 
-        {/* Navigation Tabs */}
+        {/* Enhanced Navigation Tabs with Better Visibility */}
         <Card className="mb-8 jarvis-card border-2 border-primary/30">
           <CardContent className="p-6">
             <div className="flex flex-wrap gap-2">
               {tabs.map((tab) => {
                 const IconComponent = tab.icon;
+                const isActive = activeTab === tab.id;
                 return (
                   <Button
                     key={tab.id}
-                    variant={activeTab === tab.id ? "default" : "outline"}
+                    variant="outline"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`font-orbitron ${
-                      activeTab === tab.id
-                        ? "bg-gradient-to-r from-jarvis-gold to-jarvis-gold/80 text-jarvis-dark jarvis-glow-gold"
-                        : "jarvis-border bg-card/30 hover:jarvis-glow-gold hover:text-jarvis-gold"
+                    className={`font-orbitron relative transition-all duration-300 ${
+                      isActive
+                        ? "bg-gradient-to-r from-jarvis-gold/20 to-jarvis-gold/10 border-jarvis-gold text-jarvis-gold jarvis-glow-gold shadow-[0_0_25px_rgba(255,199,0,0.6)] scale-105"
+                        : "jarvis-border bg-card/30 hover:jarvis-glow-gold hover:text-jarvis-gold hover:border-jarvis-gold/60 hover:scale-102"
                     }`}
                   >
                     <IconComponent className="mr-2 h-4 w-4" />
                     {tab.label}
+                    {isActive && (
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-jarvis-gold rounded-full shadow-[0_0_8px_rgba(255,199,0,0.8)]"></div>
+                    )}
                   </Button>
                 );
               })}
