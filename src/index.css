@@ -44,6 +44,7 @@
     --jarvis-cyan: 0 255 247;
     --jarvis-blue: 0 124 248;
     --jarvis-green: 57 255 20;
+    --jarvis-gold: 255 199 0;
     --jarvis-aqua: 0 255 255;
     --jarvis-dark: 10 15 28;
     --jarvis-darker: 0 0 0;
@@ -132,6 +133,10 @@
     @apply shadow-[0_0_20px_rgba(57,255,20,0.6)];
   }
 
+  .jarvis-glow-gold {
+    @apply shadow-[0_0_20px_rgba(255,199,0,0.6)];
+  }
+
   .jarvis-glow-aqua {
     @apply shadow-[0_0_20px_rgba(0,255,255,0.6)];
   }
@@ -193,6 +198,12 @@
 
   .mindra-active {
     animation: mindra-active 1s ease-in-out infinite;
+  }
+
+  .ai-chat-bubble {
+    @apply bg-card/90 backdrop-blur-lg border border-primary/30 rounded-2xl shadow-[0_8px_32px_rgba(0,255,247,0.15)];
+    background: rgba(16, 24, 42, 0.9);
+    backdrop-filter: blur(16px);
   }
 }
 
@@ -271,4 +282,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 255, 247, 0.8);
+}
+
+/* Progress Bar Customization */
+.progress-bar {
+  background: linear-gradient(90deg, #00fff7 0%, #007cf8 50%, #39ff14 100%);
 }

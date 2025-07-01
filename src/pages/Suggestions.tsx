@@ -3,82 +3,96 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, ArrowLeft, Clock, User } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Heart, ArrowLeft, Clock, User, Brain, Sparkles, Zap, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Suggestions = () => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Mock AI-generated suggestions based on mood
+  // Enhanced AI-generated suggestions with Jarvis theme
   const mockSuggestions = [
     {
       id: 1,
-      title: "5-Minute Deep Breathing",
-      description: "A calming breathing exercise to reduce stress and center your mind",
+      title: "Neural Breathing Protocol",
+      description: "Advanced breathing technique to optimize neural patterns and reduce cortisol levels",
       duration: "5 min",
       category: "Mindfulness",
       difficulty: "Easy",
-      icon: "🫁",
-      color: "bg-blue-50 border-blue-200",
+      icon: "🧠",
+      color: "jarvis-cyan",
+      xpReward: 15,
+      priority: "high"
     },
     {
       id: 2,
-      title: "Gratitude Journaling",
-      description: "Write down three things you're grateful for today",
+      title: "Gratitude Matrix Logging",
+      description: "Quantum-level gratitude tracking to enhance dopamine pathways",
       duration: "10 min",
       category: "Reflection",
       difficulty: "Easy",
-      icon: "📝",
-      color: "bg-green-50 border-green-200",
+      icon: "✨",
+      color: "jarvis-gold",
+      xpReward: 20,
+      priority: "medium"
     },
     {
       id: 3,
-      title: "Progressive Muscle Relaxation",
-      description: "Systematically tense and relax different muscle groups",
+      title: "Progressive Muscle Optimization",
+      description: "Systematic muscle relaxation protocol for stress mitigation",
       duration: "15 min",
       category: "Relaxation",
       difficulty: "Medium",
       icon: "💪",
-      color: "bg-purple-50 border-purple-200",
+      color: "jarvis-blue",
+      xpReward: 25,
+      priority: "high"
     },
     {
       id: 4,
-      title: "Nature Sounds Meditation",
-      description: "Listen to calming nature sounds while focusing on your breath",
+      title: "Binaural Frequency Meditation",
+      description: "Sound-wave meditation with nature frequencies for mental clarity",
       duration: "20 min",
       category: "Meditation",
       difficulty: "Easy",
-      icon: "🌿",
-      color: "bg-emerald-50 border-emerald-200",
+      icon: "🎵",
+      color: "jarvis-green",
+      xpReward: 30,
+      priority: "low"
     },
     {
       id: 5,
-      title: "Gentle Stretching",
-      description: "Simple stretches to release tension and improve mood",
+      title: "Dynamic Flexibility Protocol",
+      description: "Biomechanical stretches to release tension and boost endorphins",
       duration: "12 min",
       category: "Movement",
       difficulty: "Easy",
       icon: "🧘‍♀️",
-      color: "bg-pink-50 border-pink-200",
+      color: "jarvis-cyan",
+      xpReward: 18,
+      priority: "medium"
     },
     {
       id: 6,
-      title: "Positive Affirmations",
-      description: "Practice self-compassion with guided positive affirmations",
+      title: "Positive Neural Reinforcement",
+      description: "AI-guided affirmations to restructure cognitive patterns",
       duration: "8 min",
       category: "Self-Care",
       difficulty: "Easy",
-      icon: "✨",
-      color: "bg-yellow-50 border-yellow-200",
+      icon: "⚡",
+      color: "jarvis-gold",
+      xpReward: 22,
+      priority: "high"
     },
   ];
 
+  const categories = ["All", "Mindfulness", "Reflection", "Relaxation", "Meditation", "Movement", "Self-Care"];
+
   useEffect(() => {
-    // Simulate API call to get personalized suggestions
     const fetchSuggestions = async () => {
       setLoading(true);
-      // Simulate delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       setSuggestions(mockSuggestions);
       setLoading(false);
@@ -87,57 +101,131 @@ const Suggestions = () => {
     fetchSuggestions();
   }, []);
 
+  const filteredSuggestions = selectedCategory === "All" 
+    ? suggestions 
+    : suggestions.filter(s => s.category === selectedCategory);
+
   const handleStartActivity = (suggestion: any) => {
-    console.log("Starting activity:", suggestion.title);
-    // Here you would typically start a timer or navigate to activity details
+    console.log("Initiating protocol:", suggestion.title);
+  };
+
+  const handleSurpriseMe = () => {
+    const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+    handleStartActivity(randomSuggestion);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 hud-grid flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Generating personalized suggestions...</p>
+          <div className="w-16 h-16 jarvis-card rounded-full flex items-center justify-center mx-auto mb-4 jarvis-glow-cyan animate-pulse">
+            <Brain className="h-8 w-8 text-jarvis-cyan jarvis-pulse" />
+          </div>
+          <p className="text-jarvis-cyan font-orbitron font-bold">Analyzing neural patterns...</p>
+          <p className="text-muted-foreground font-exo text-sm mt-2">Generating personalized protocols</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      {/* Header */}
-      <header className="p-6 flex items-center">
-        <Link to="/mood-checkin" className="flex items-center space-x-2 mr-4">
-          <ArrowLeft className="h-5 w-5 text-gray-600" />
-        </Link>
-        <div className="flex items-center space-x-2">
-          <Heart className="h-6 w-6 text-blue-600" />
-          <h1 className="text-xl font-bold text-gray-800">MindMate</h1>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 hud-grid">
+      {/* Jarvis Header */}
+      <header className="p-6 flex items-center justify-between backdrop-blur-sm border-b border-primary/10 surface-panel">
+        <div className="flex items-center space-x-4">
+          <Link to="/dashboard" className="flex items-center space-x-2 text-muted-foreground hover:text-jarvis-cyan transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 jarvis-card rounded-full flex items-center justify-center jarvis-glow-cyan border-2 border-jarvis-cyan/40">
+              <Brain className="h-6 w-6 text-jarvis-cyan jarvis-pulse" />
+            </div>
+            <div>
+              <h1 className="text-xl font-orbitron font-bold jarvis-text">AI Protocol Matrix</h1>
+              <p className="text-xs text-muted-foreground font-exo">Personalized Wellness Algorithms</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-4">
+          <ThemeToggle />
+          <Button
+            onClick={handleSurpriseMe}
+            className="bg-gradient-to-r from-jarvis-gold to-jarvis-gold/80 hover:jarvis-glow-gold font-orbitron text-jarvis-dark font-bold"
+          >
+            <Sparkles className="mr-2 h-4 w-4" />
+            Surprise Protocol
+          </Button>
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-8 max-w-4xl">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Personalized Self-Care</h2>
-          <p className="text-gray-600">Based on your current mood and stress level, here are some activities to help you feel better</p>
+      <div className="container mx-auto px-6 py-8 max-w-7xl">
+        {/* Welcome Section */}
+        <div className="mb-8 text-center">
+          <h2 className="text-4xl font-orbitron font-bold mb-2 bg-gradient-to-r from-jarvis-cyan via-jarvis-blue to-jarvis-gold bg-clip-text text-transparent">
+            Neural Enhancement Protocols
+          </h2>
+          <p className="text-muted-foreground font-exo">AI-curated wellness algorithms optimized for your current biometric state</p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {suggestions.map((suggestion) => (
-            <Card key={suggestion.id} className={`${suggestion.color} border-2 hover:shadow-lg transition-all hover:scale-105`}>
-              <CardHeader className="pb-4">
+        {/* Category Filter */}
+        <Card className="mb-8 jarvis-card border-2 border-primary/30">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-2 mb-4">
+              <Filter className="h-4 w-4 text-jarvis-cyan" />
+              <span className="font-orbitron text-sm">Protocol Categories</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedCategory(category)}
+                  className={`font-exo ${
+                    selectedCategory === category
+                      ? "bg-gradient-to-r from-jarvis-cyan to-jarvis-blue jarvis-glow-cyan"
+                      : "jarvis-border bg-card/30 hover:jarvis-glow-cyan hover:text-jarvis-cyan"
+                  }`}
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Suggestions Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {filteredSuggestions.map((suggestion, index) => (
+            <Card 
+              key={suggestion.id} 
+              className={`jarvis-card border-2 border-${suggestion.color}/30 hover:jarvis-glow-${suggestion.color === 'jarvis-gold' ? 'gold' : 'cyan'} transition-all duration-300 hover:scale-105 group floating-animation`}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <CardHeader className="pb-4 relative">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="text-3xl">{suggestion.icon}</div>
-                  <Badge variant="secondary" className="text-xs">
-                    {suggestion.category}
-                  </Badge>
+                  <div className="text-3xl group-hover:scale-110 transition-transform">{suggestion.icon}</div>
+                  <div className="flex items-center space-x-2">
+                    <Badge 
+                      variant="secondary" 
+                      className={`text-xs bg-${suggestion.color}/20 text-${suggestion.color} border-${suggestion.color}/40`}
+                    >
+                      {suggestion.category}
+                    </Badge>
+                    {suggestion.priority === "high" && (
+                      <div className="w-2 h-2 bg-jarvis-gold rounded-full animate-pulse"></div>
+                    )}
+                  </div>
                 </div>
-                <CardTitle className="text-lg">{suggestion.title}</CardTitle>
+                <CardTitle className="text-lg font-orbitron group-hover:text-jarvis-cyan transition-colors">
+                  {suggestion.title}
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 text-sm mb-4">{suggestion.description}</p>
+                <p className="text-muted-foreground text-sm mb-4 font-exo">{suggestion.description}</p>
                 
-                <div className="flex items-center justify-between mb-4 text-sm text-gray-500">
+                <div className="flex items-center justify-between mb-4 text-sm text-muted-foreground font-mono">
                   <div className="flex items-center space-x-1">
                     <Clock className="h-4 w-4" />
                     <span>{suggestion.duration}</span>
@@ -146,24 +234,43 @@ const Suggestions = () => {
                     <User className="h-4 w-4" />
                     <span>{suggestion.difficulty}</span>
                   </div>
+                  <div className="flex items-center space-x-1">
+                    <Zap className="h-4 w-4 text-jarvis-gold" />
+                    <span className="text-jarvis-gold">+{suggestion.xpReward} XP</span>
+                  </div>
                 </div>
 
                 <Button
                   onClick={() => handleStartActivity(suggestion)}
-                  className="w-full bg-white/80 text-gray-800 border border-gray-200 hover:bg-white hover:shadow-md"
+                  className="w-full bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/40 hover:border-primary/80 hover:jarvis-glow-cyan text-white transition-all font-orbitron"
                   variant="outline"
                 >
-                  Start Activity
+                  <Zap className="mr-2 h-4 w-4" />
+                  Initiate Protocol
                 </Button>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        {/* Quick Actions */}
+        <div className="grid md:grid-cols-3 gap-4">
           <Link to="/dashboard">
-            <Button size="lg" className="px-8 py-6 bg-blue-600 hover:bg-blue-700">
-              View Dashboard
+            <Button variant="outline" className="w-full h-16 text-lg jarvis-border bg-card/30 backdrop-blur-sm hover:jarvis-glow-cyan transition-all font-orbitron">
+              <Heart className="mr-2 h-5 w-5" />
+              Command Center
+            </Button>
+          </Link>
+          <Link to="/analytics">
+            <Button variant="outline" className="w-full h-16 text-lg jarvis-border bg-card/30 backdrop-blur-sm hover:jarvis-glow-gold transition-all font-orbitron">
+              <Brain className="mr-2 h-5 w-5" />
+              Neural Analytics
+            </Button>
+          </Link>
+          <Link to="/gamification">
+            <Button variant="outline" className="w-full h-16 text-lg jarvis-border bg-card/30 backdrop-blur-sm hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all font-orbitron">
+              <Sparkles className="mr-2 h-5 w-5" />
+              Achievement Matrix
             </Button>
           </Link>
         </div>
