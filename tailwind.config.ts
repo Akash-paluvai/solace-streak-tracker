@@ -22,6 +22,7 @@ export default {
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],
 				'exo': ['Exo 2', 'sans-serif'],
+				'rajdhani': ['Rajdhani', 'sans-serif'],
 				'mono': ['Roboto Mono', 'monospace'],
 			},
 			colors: {
@@ -68,12 +69,14 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Jarvis Theme Colors
-				'jarvis-blue': '#00BFFF',
-				'jarvis-gold': '#FFC700',
-				'jarvis-red': '#FF2D55',
-				'space-navy': '#050812',
-				'surface-panel': 'rgba(16, 24, 42, 0.75)',
+				// J.A.R.V.I.S Theme Colors
+				'jarvis-cyan': '#00fff7',
+				'jarvis-blue': '#007cf8',
+				'jarvis-green': '#39ff14',
+				'jarvis-aqua': '#00ffff',
+				'jarvis-dark': '#0a0f1c',
+				'jarvis-darker': '#000000',
+				'jarvis-surface': 'rgba(16, 24, 42, 0.9)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -99,22 +102,20 @@ export default {
 				},
 				'jarvis-pulse': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(0,191,255,0.3)',
+						boxShadow: '0 0 20px rgba(0,255,247,0.4)',
 						transform: 'scale(1)'
 					},
 					'50%': {
-						boxShadow: '0 0 40px rgba(0,191,255,0.6)',
+						boxShadow: '0 0 40px rgba(0,255,247,0.8)',
 						transform: 'scale(1.02)'
 					}
 				},
-				'health-core-pulse': {
-					'0%, 100%': {
-						transform: 'scale(1)',
-						filter: 'drop-shadow(0 0 20px rgba(0,191,255,0.6))'
+				'jarvis-scan': {
+					'0%': {
+						backgroundPosition: '-100% 0'
 					},
-					'50%': {
-						transform: 'scale(1.05)',
-						filter: 'drop-shadow(0 0 40px rgba(0,191,255,0.9))'
+					'100%': {
+						backgroundPosition: '100% 0'
 					}
 				},
 				'floating': {
@@ -122,29 +123,25 @@ export default {
 						transform: 'translateY(0px)'
 					},
 					'50%': {
-						transform: 'translateY(-10px)'
+						transform: 'translateY(-15px)'
 					}
 				},
-				'glow-intensity': {
+				'mindra-pulse': {
 					'0%, 100%': {
-						boxShadow: '0 0 15px rgba(0,191,255,0.2)'
+						boxShadow: '0 0 15px rgba(0,255,247,0.6)',
+						transform: 'scale(1)'
 					},
 					'50%': {
-						boxShadow: '0 0 30px rgba(0,191,255,0.5)'
+						boxShadow: '0 0 30px rgba(0,255,247,1)',
+						transform: 'scale(1.1)'
 					}
 				},
-				'level-up-burst': {
-					'0%': {
-						transform: 'scale(1)',
-						opacity: '1'
+				'mindra-active': {
+					'0%, 100%': {
+						boxShadow: '0 0 20px rgba(57,255,20,0.8)'
 					},
 					'50%': {
-						transform: 'scale(1.2)',
-						opacity: '0.8'
-					},
-					'100%': {
-						transform: 'scale(1.5)',
-						opacity: '0'
+						boxShadow: '0 0 40px rgba(57,255,20,1)'
 					}
 				}
 			},
@@ -152,10 +149,10 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'jarvis-pulse': 'jarvis-pulse 2s ease-in-out infinite',
-				'health-core-pulse': 'health-core-pulse 2.5s ease-in-out infinite',
-				'floating': 'floating 3s ease-in-out infinite',
-				'glow-intensity': 'glow-intensity 2s ease-in-out infinite alternate',
-				'level-up-burst': 'level-up-burst 0.6s ease-out'
+				'jarvis-scan': 'jarvis-scan 3s linear infinite',
+				'floating': 'floating 4s ease-in-out infinite',
+				'mindra-pulse': 'mindra-pulse 2s ease-in-out infinite',
+				'mindra-active': 'mindra-active 1s ease-in-out infinite'
 			}
 		}
 	},

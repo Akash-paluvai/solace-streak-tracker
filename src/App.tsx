@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ParticleBackground } from "@/components/ParticleBackground";
+import { MindraAssistant } from "@/components/MindraAssistant";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import MoodCheckIn from "./pages/MoodCheckIn";
@@ -72,6 +73,8 @@ const App = () => (
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            {/* MINDRA AI Assistant - Available globally */}
+            <MindraAssistant />
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>

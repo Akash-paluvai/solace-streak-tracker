@@ -25,8 +25,8 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "dark", // Default to dark mode for futuristic feel
-  storageKey = "mindmate-ui-theme",
+  defaultTheme = "dark", // J.A.R.V.I.S theme defaults to dark
+  storageKey = "jarvis-mindmate-theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
