@@ -1,3 +1,4 @@
+// MindraAssistant.tsx
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -40,46 +41,50 @@ export const MindraAssistant = ({ className }: MindraAssistantProps) => {
     scrollToBottom();
   }, [messages]);
 
-  // MINDRA's intelligent responses
-  const getMindraResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    // Mood tracking responses
-    if (lowerMessage.includes("sad") || lowerMessage.includes("down") || lowerMessage.includes("depressed")) {
-      return "I sense you're going through a difficult time. These feelings are valid and temporary. Would you like me to guide you through a quick breathing exercise or suggest some uplifting activities?";
-    }
-    
-    if (lowerMessage.includes("anxious") || lowerMessage.includes("worried") || lowerMessage.includes("stress")) {
-      return "I'm detecting elevated stress levels. Let's work together to bring you back to balance. I recommend trying the 4-7-8 breathing technique: breathe in for 4, hold for 7, exhale for 8. Shall we practice together?";
-    }
-    
-    if (lowerMessage.includes("happy") || lowerMessage.includes("good") || lowerMessage.includes("great") || lowerMessage.includes("excited")) {
-      return "Wonderful! I love seeing you in such a positive state. Your joy is contagious! What's contributing to these amazing feelings today? Let's capture this moment in your mood journal.";
-    }
-    
-    if (lowerMessage.includes("tired") || lowerMessage.includes("exhausted") || lowerMessage.includes("sleep")) {
-      return "Rest is crucial for mental wellness. Your body and mind are telling you something important. Have you been getting quality sleep? I can suggest some relaxation techniques or help you plan a better sleep routine.";
-    }
-    
-    if (lowerMessage.includes("routine") || lowerMessage.includes("habit") || lowerMessage.includes("daily")) {
-      return "Building healthy routines is one of the best investments in your mental health! I can help you create personalized daily habits. What area would you like to focus on - morning routine, exercise, meditation, or something else?";
-    }
-    
-    if (lowerMessage.includes("goal") || lowerMessage.includes("progress") || lowerMessage.includes("achievement")) {
-      return "Setting and achieving goals boosts mental resilience! I'm here to celebrate your wins and support you through challenges. What goals are you working toward? Let's break them into manageable steps.";
-    }
+const getMindraResponse = async (userMessage: string): Promise<string> => {
+  try {
+    console.log("✅ Model being used:", import.meta.env.VITE_OPENROUTER_API_MODEL);
 
-    // Default encouraging responses
-    const responses = [
-      "Thank you for sharing with me. Your mental health journey is unique and valuable. What would you like to explore together today?",
-      "I'm here to listen and support you. Every step you take toward better mental health matters. How can I assist you right now?",
-      "Your willingness to engage with your mental wellness shows great strength. What aspect of your wellbeing would you like to focus on?",
-      "I appreciate you reaching out. Remember, taking care of your mental health is an act of self-love. What support do you need today?",
-      "Mental wellness is a journey, not a destination. I'm honored to be part of your path. What would help you feel more balanced right now?",
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)];
-  };
+    const response = await fetch(import.meta.env.VITE_OPENROUTER_API_URL!, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:3000", // Or your live domain
+        "X-Title": "MindRa", // Optional but good for OpenRouter usage tracking
+      },
+      body: JSON.stringify({
+        model: import.meta.env.VITE_OPENROUTER_API_MODEL,
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are MindRa, an emotionally intelligent AI assistant built to help users with mental health support in a warm and friendly way.",
+          },
+          {
+            role: "user",
+            content: userMessage,
+          },
+        ],
+        
+      }),
+      
+    });
+
+    const data = await response.json();
+    console.log("🔍 Full API response:", data); // Log the full response
+
+    if (response.ok && data.choices && data.choices.length > 0) {
+      return data.choices[0].message.content;
+    } else {
+      console.error("❌ OpenRouter error:", data);
+      return "Oops! Something went wrong while fetching response.";
+    }
+  } catch (error) {
+    console.error("❗ MINDRA API exception:", error);
+    return "Oops! Something went wrong.";
+  }
+};
 
   const handleSendMessage = async () => {
     if (!inputText.trim()) return;
@@ -91,22 +96,24 @@ export const MindraAssistant = ({ className }: MindraAssistantProps) => {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputText("");
     setIsTyping(true);
 
-    // Simulate MINDRA processing
-    setTimeout(() => {
+    try {
+      const reply = await getMindraResponse(inputText);
       const mindraResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: getMindraResponse(inputText),
+        text: reply,
         sender: "mindra",
         timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, mindraResponse]);
+      setMessages((prev) => [...prev, mindraResponse]);
+    } catch (err) {
+      console.error("Failed to get MINDRA reply", err);
+    } finally {
       setIsTyping(false);
-    }, 1200);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -117,7 +124,7 @@ export const MindraAssistant = ({ className }: MindraAssistantProps) => {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   if (!isOpen) {
@@ -135,10 +142,12 @@ export const MindraAssistant = ({ className }: MindraAssistantProps) => {
 
   return (
     <div className={cn("fixed bottom-6 right-6 z-50", className)}>
-      <Card className={cn(
-        "jarvis-card border-2 border-jarvis-cyan/40 shadow-[0_0_30px_rgba(0,255,247,0.3)]",
-        isMinimized ? "w-80 h-14" : "w-96 h-[500px]"
-      )}>
+      <Card
+        className={cn(
+          "jarvis-card border-2 border-jarvis-cyan/40 shadow-[0_0_30px_rgba(0,255,247,0.3)]",
+          isMinimized ? "w-80 h-14" : "w-96 h-[500px]"
+        )}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-jarvis-cyan/30">
           <div className="flex items-center space-x-3">
@@ -195,15 +204,12 @@ export const MindraAssistant = ({ className }: MindraAssistantProps) => {
                       )}
                       <div className="flex-1">
                         <p>{message.text}</p>
-                        <p className="text-xs mt-1 opacity-70">
-                          {formatTime(message.timestamp)}
-                        </p>
+                        <p className="text-xs mt-1 opacity-70">{formatTime(message.timestamp)}</p>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-
               {isTyping && (
                 <div className="flex justify-start">
                   <div className="bg-jarvis-surface/80 border border-jarvis-cyan/30 max-w-xs px-3 py-2 rounded-lg">
@@ -211,8 +217,14 @@ export const MindraAssistant = ({ className }: MindraAssistantProps) => {
                       <Bot className="h-4 w-4 text-jarvis-cyan" />
                       <div className="flex space-x-1">
                         <div className="w-2 h-2 bg-jarvis-cyan rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-jarvis-cyan rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-                        <div className="w-2 h-2 bg-jarvis-cyan rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                        <div
+                          className="w-2 h-2 bg-jarvis-cyan rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-jarvis-cyan rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
                       </div>
                     </div>
                   </div>
