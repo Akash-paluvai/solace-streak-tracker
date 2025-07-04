@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,8 +9,21 @@ import { QuestCard } from "@/components/QuestCard";
 import { Heart, ArrowLeft, TrendingUp, Calendar, Zap, Star, Activity, Brain, Shield, Wifi, WifiOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth"; // Assuming you have this hook
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const [moodLogs, setMoodLogs] = useState([]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`http://localhost:3000/api/mood/${user.id}`)
+      .then(res => res.json())
+      .then(data => setMoodLogs(data))
+      .catch(err => console.error(err));
+  }, [user?.id]);
+
   // Mock user data with Jarvis theme
   const userStats = {
     level: 12,
@@ -24,22 +36,49 @@ const Dashboard = () => {
     isOnline: true
   };
 
-  // Mock health data
-  const moodData = [
-    { day: "Mon", mood: 3, stress: 6, heartRate: 68 },
-    { day: "Tue", mood: 4, stress: 4, heartRate: 71 },
-    { day: "Wed", mood: 3, stress: 7, heartRate: 75 },
-    { day: "Thu", mood: 5, stress: 3, heartRate: 69 },
-    { day: "Fri", mood: 4, stress: 5, heartRate: 73 },
-    { day: "Sat", mood: 5, stress: 2, heartRate: 65 },
-    { day: "Sun", mood: 4, stress: 4, heartRate: 72 },
-  ];
+  // Transform moodLogs for the chart (example: last 7 days)
+  const moodData = moodLogs.slice(0, 7).map(log => ({
+    day: new Date(log.createdAt).toLocaleDateString('en-US', { weekday: 'short' }),
+    mood: log.mood === "happy" ? 5 : log.mood === "calm" ? 4 : log.mood === "neutral" ? 3 : log.mood === "anxious" ? 2 : 1,
+    stress: log.stressLevel || 5,
+    heartRate: log.heartRate || 70,
+  }));
 
   const dailyQuests = [
     { title: "Morning Check-in", description: "Log your daily mood", xpReward: 10, completed: true },
     { title: "Hydration Goal", description: "Drink 8 glasses of water", xpReward: 15, completed: false, progress: 5, total: 8 },
     { title: "Mindful Moment", description: "Complete 5-minute meditation", xpReward: 20, completed: false, progress: 0, total: 1 },
   ];
+
+  // Calculate current streak (consecutive days with check-ins)
+  function calculateStreak(logs) {
+    if (!logs.length) return 0;
+    let streak = 1;
+    let prevDate = new Date(logs[0].createdAt);
+    for (let i = 1; i < logs.length; i++) {
+      const currDate = new Date(logs[i].createdAt);
+      const diff = (prevDate.getTime() - currDate.getTime()) / (1000 * 60 * 60 * 24);
+      if (diff >= 1 && diff < 2) {
+        streak++;
+        prevDate = currDate;
+      } else if (diff >= 2) {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  const currentStreak = calculateStreak(moodLogs);
+  const totalCheckIns = moodLogs.length;
+  const latestMood = moodLogs[0]?.mood || "neutral";
+  const latestHeartRate = moodLogs[0]?.heartRate || 72;
+  const avgStress =
+    moodLogs.length > 0
+      ? (
+          moodLogs.reduce((sum, log) => sum + (log.stressLevel || 5), 0) /
+          moodLogs.length
+        ).toFixed(1)
+      : "N/A";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 hud-grid">
@@ -50,7 +89,7 @@ const Dashboard = () => {
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div className="flex items-center space-x-3">
-            <HealthCore mood={userStats.mood} size="sm" heartRate={userStats.heartRate} />
+            <HealthCore mood={latestMood} size="sm" heartRate={latestHeartRate} />
             <div>
               <h1 className="text-xl font-orbitron font-bold jarvis-text">Command Center</h1>
               <p className="text-xs text-muted-foreground">Level {userStats.level} Health Explorer</p>
@@ -114,12 +153,12 @@ const Dashboard = () => {
                 <CardTitle className="font-orbitron text-center">Health Core</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col items-center space-y-4">
-                <HealthCore mood={userStats.mood} size="lg" heartRate={userStats.heartRate} />
+                <HealthCore mood={latestMood} size="lg" heartRate={latestHeartRate} />
                 <div className="text-center">
-                  <p className="font-orbitron font-bold text-lg capitalize jarvis-text">{userStats.mood}</p>
+                  <p className="font-orbitron font-bold text-lg capitalize jarvis-text">{latestMood}</p>
                   <p className="text-xs text-muted-foreground">Current State</p>
                   <div className="mt-2">
-                    <span className="stat-display">{userStats.heartRate} BPM</span>
+                    <span className="stat-display">{latestHeartRate} BPM</span>
                   </div>
                 </div>
               </CardContent>
@@ -128,54 +167,12 @@ const Dashboard = () => {
 
           {/* Stats Grid */}
           <div className="lg:col-span-3 grid md:grid-cols-3 gap-4">
-            <StatCard
-              title="Current Streak"
-              value={userStats.currentStreak}
-              unit="days"
-              icon={Calendar}
-              trend="up"
-              glowColor="cyan"
-            />
-            <StatCard
-              title="Total Check-ins"
-              value={userStats.totalCheckIns}
-              unit="this month"
-              icon={Heart}
-              trend="up"
-              glowColor="gold"
-            />
-            <StatCard
-              title="Wellness Score"
-              value="85"
-              unit="%"
-              icon={TrendingUp}
-              trend="up"
-              glowColor="cyan"
-            />
-            <StatCard
-              title="Heart Rate"
-              value="72"
-              unit="bpm"
-              icon={Activity}
-              trend="neutral"
-              glowColor="cyan"
-            />
-            <StatCard
-              title="Stress Level"
-              value="3"
-              unit="/10"
-              icon={Brain}
-              trend="down"
-              glowColor="gold"
-            />
-            <StatCard
-              title="Sleep Score"
-              value="92"
-              unit="%"
-              icon={Shield}
-              trend="up"
-              glowColor="cyan"
-            />
+            <StatCard title="Current Streak" value={currentStreak} unit="days" icon={Calendar} trend="up" glowColor="cyan" />
+            <StatCard title="Total Check-ins" value={totalCheckIns} unit="all time" icon={Heart} trend="up" glowColor="gold" />
+            <StatCard title="Wellness Score" value="85" unit="%" icon={TrendingUp} trend="up" glowColor="cyan" />
+            <StatCard title="Heart Rate" value={latestHeartRate} unit="bpm" icon={Activity} trend="neutral" glowColor="cyan" />
+            <StatCard title="Stress Level" value={avgStress} unit="/10" icon={Brain} trend="down" glowColor="gold" />
+            <StatCard title="Sleep Score" value="92" unit="%" icon={Shield} trend="up" glowColor="cyan" />
           </div>
         </div>
 
