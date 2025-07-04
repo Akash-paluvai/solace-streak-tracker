@@ -3,10 +3,12 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 const mongoose = require('mongoose');
+const moodRoutes = require('./routes/mood');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api/mood', moodRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
