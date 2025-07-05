@@ -9,20 +9,59 @@ import { QuestCard } from "@/components/QuestCard";
 import { Heart, ArrowLeft, TrendingUp, Calendar, Zap, Star, Activity, Brain, Shield, Wifi, WifiOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth"; // Assuming you have this hook
+
+
+import{ getLatestSleepScore, getLatestHeartRate} from './sensorsData.js'
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [moodLogs, setMoodLogs] = useState([]);
+  const [latestHeartRate, setLatestHeartRate] = useState(getLatestHeartRate());
+  const [latestSleepScore, setLatestSleepScore] = useState(getLatestSleepScore());
+  let todaysVisit= false
+  const prevHeartRate = useRef(latestHeartRate);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newHeartRate = getLatestHeartRate();
+      const newSleepScore = getLatestSleepScore();
+
+      // Update sleep score (optional – always update)
+      setLatestSleepScore(newSleepScore);
+
+      // Update heart rate only if change is >= 2 bpm
+      if (Math.abs(newHeartRate - prevHeartRate.current) >= 2) {
+        setLatestHeartRate(newHeartRate);
+        prevHeartRate.current = newHeartRate;
+      }
+    }, 1000); // check every second
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (!user?.id) return;
     fetch(`http://localhost:3000/api/mood/${user.id}`)
       .then(res => res.json())
-      .then(data => setMoodLogs(data))
+      .then(data => {
+        console.log(data)
+        setMoodLogs(data.logs)
+        todaysVisit=data.isVisitedToday})
       .catch(err => console.error(err));
   }, [user?.id]);
+
+
+  //  useEffect(() => {
+  //   if (!user?.id) return;
+  //   fetch(`http://localhost:3000/api/dailyquest/${user.id}`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       console.log(data)
+  //       setDailyQuestLogs(data)})
+  //     .catch(err => console.error(err));
+  // }, [user?.id]);
 
   // Mock user data with Jarvis theme
   const userStats = {
@@ -31,13 +70,13 @@ const Dashboard = () => {
     totalXP: 400,
     currentStreak: 7,
     totalCheckIns: 24,
-    mood: "happy",
+    mood: moodLogs,
     heartRate: 72,
     isOnline: true
   };
 
   // Transform moodLogs for the chart (example: last 7 days)
-  const moodData = moodLogs.slice(0, 7).map(log => ({
+  const moodData = moodLogs.slice(0,7).map(log => ({
     day: new Date(log.createdAt).toLocaleDateString('en-US', { weekday: 'short' }),
     mood: log.mood === "happy" ? 5 : log.mood === "calm" ? 4 : log.mood === "neutral" ? 3 : log.mood === "anxious" ? 2 : 1,
     stress: log.stressLevel || 5,
@@ -71,7 +110,6 @@ const Dashboard = () => {
   const currentStreak = calculateStreak(moodLogs);
   const totalCheckIns = moodLogs.length;
   const latestMood = moodLogs[0]?.mood || "neutral";
-  const latestHeartRate = moodLogs[0]?.heartRate || 72;
   const avgStress =
     moodLogs.length > 0
       ? (
@@ -79,6 +117,23 @@ const Dashboard = () => {
           moodLogs.length
         ).toFixed(1)
       : "N/A";
+
+    function calculateWellnessScore(latestHeartRate, latestSleepScore, stressLevel) {
+  // Normalize heart rate: ideal = 60-80 bpm
+  let heartScore = 100 - Math.abs(70 - latestHeartRate) * 2; // penalize deviations from 70
+  heartScore = Math.max(0, Math.min(100, heartScore));
+
+  // Normalize stress: 1 (low) to 10 (high)
+  const stressScore = 100 - (stressLevel - 1) * 10;
+
+  // Weighted average
+  const wellnessScore = Math.round(
+    0.4 * heartScore +
+    0.4 * latestSleepScore +
+    0.2 * stressScore
+  );
+  return wellnessScore.toString()
+}
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 hud-grid">
@@ -169,10 +224,10 @@ const Dashboard = () => {
           <div className="lg:col-span-3 grid md:grid-cols-3 gap-4">
             <StatCard title="Current Streak" value={currentStreak} unit="days" icon={Calendar} trend="up" glowColor="cyan" />
             <StatCard title="Total Check-ins" value={totalCheckIns} unit="all time" icon={Heart} trend="up" glowColor="gold" />
-            <StatCard title="Wellness Score" value="85" unit="%" icon={TrendingUp} trend="up" glowColor="cyan" />
+            <StatCard title="Wellness Score" value={calculateWellnessScore(latestHeartRate,latestSleepScore,avgStress)} unit="%" icon={TrendingUp} trend="up" glowColor="cyan" />
             <StatCard title="Heart Rate" value={latestHeartRate} unit="bpm" icon={Activity} trend="neutral" glowColor="cyan" />
             <StatCard title="Stress Level" value={avgStress} unit="/10" icon={Brain} trend="down" glowColor="gold" />
-            <StatCard title="Sleep Score" value="92" unit="%" icon={Shield} trend="up" glowColor="cyan" />
+            <StatCard title="Sleep Score" value={latestSleepScore} unit="%" icon={Shield} trend="up" glowColor="cyan" />
           </div>
         </div>
 

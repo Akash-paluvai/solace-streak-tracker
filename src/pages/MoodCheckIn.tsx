@@ -39,6 +39,7 @@ const MoodCheckIn = () => {
         body: JSON.stringify({
           userId: user?.id, // make sure you have this value
           mood: selectedMood,
+          stressLevel: stressLevel,
           note: note, // use the note state variable
         }),
       });
@@ -145,13 +146,14 @@ const MoodCheckIn = () => {
                         <span className="text-red-400">Critical (10)</span>
                       </div>
                       <Slider
-                        value={stressLevel}
-                        onValueChange={setStressLevel}
-                        max={10}
-                        min={1}
-                        step={1}
-                        className="w-full"
-                      />
+  value={stressLevel}
+  onValueChange={setStressLevel}
+  min={1}
+  max={10}
+  step={1}
+  className="w-full"
+/>
+
                       <div className="text-center">
                         <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full border ${
                           stressLevel[0] <= 3 ? 'border-jarvis-green/40 bg-jarvis-green/10 text-jarvis-green' :
