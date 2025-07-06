@@ -21,6 +21,8 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import NeuralBreathingPage from "./pages/NeuralBreathing"; 
 import GratitudeMatrixPage from "./pages/GratitudeMatrix";
+import ComingSoon from "./pages/ComingSoon";
+
 
 
 
@@ -89,27 +91,27 @@ const App = () => (
   </ProtectedRoute>
 } />
 
-{/* <Route path="/activity/progressive-muscle" element={
+<Route path="/activity/progressive-muscle" element={
   <ProtectedRoute>
-    <ProgressiveMusclePage />
+    <ComingSoon  />
   </ProtectedRoute>
 } />
 
 <Route path="/activity/binaural-meditation" element={
   <ProtectedRoute>
-    <BinauralMeditationPage />
+    <ComingSoon  />
   </ProtectedRoute>
 } />
 <Route path="/activity/flexibility" element={
   <ProtectedRoute>
-    <FlexibilityPage />
+    <ComingSoon  />
   </ProtectedRoute>
 } />
 <Route path="/activity/neural-reinforcement" element={
   <ProtectedRoute>
-    <NeuralReinforcementPage />
+    <ComingSoon />
   </ProtectedRoute>
-} /> */}
+} />
 
 
 

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import BloomCanvas from "@/components/BloomCanvas";
 import XPRewardPopup from "./XPRewardPopup";
-
+import VoiceListeningWaves from "@/components/VoiceListeningWaves";
+import { Sparkles, ArrowLeft } from "lucide-react";
 
 declare global {
   interface Window {
@@ -12,6 +14,8 @@ declare global {
 }
 
 const GratitudeMatrix: React.FC = () => {
+  const navigate = useNavigate();
+
   const [entries, setEntries] = useState(["", "", ""]);
   const [listeningIndex, setListeningIndex] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -69,47 +73,77 @@ const GratitudeMatrix: React.FC = () => {
   };
 
   return (
-    <div className="gratitude-container">
-      <h1 className="title">Gratitude Matrix 🌌</h1>
-      <p className="prompt">Speak or type 3 things you're grateful for today:</p>
+    <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-muted/20 hud-grid p-6">
+      {listeningIndex !== null && <VoiceListeningWaves />}
 
-      {entries.map((entry, index) => (
-        <div key={index} className="entry-box">
-          <textarea
-            placeholder={`Gratitude #${index + 1}`}
-            value={entry}
-            onChange={(e) => {
-              const updated = [...entries];
-              updated[index] = e.target.value;
-              setEntries(updated);
-            }}
-          />
-          <button onClick={() => handleVoiceInput(index)}>
-            {listeningIndex === index ? "🎤 Listening..." : "🎙️ Speak"}
-          </button>
-        </div>
-      ))}
-
-      <button onClick={handleSubmit} className="submit-button" disabled={loading}>
-        {loading ? "Analyzing..." : "Submit Gratitude"}
+      {/* 🔙 Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="absolute top-4 left-4 z-20 flex items-center gap-2 px-4 py-2 text-sm border border-jarvis-cyan rounded-lg font-orbitron text-jarvis-cyan bg-background/30 hover:jarvis-glow-cyan transition-all"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back
       </button>
 
-      {submitted && (
-        <div className="response-area">
-          <h2 className="summary-title">🧠 Sentiment Scores:</h2>
-          <ul>
-            {sentiments?.map((score, idx) => (
-              <li key={idx}>Gratitude #{idx + 1}: {score >= 0 ? "+" : ""}{score}</li>
-            ))}
-          </ul>
-
-          <h2 className="summary-title">🌸 AI Reflection:</h2>
-          <p className="summary-text">{summary}</p>
+      <div className="max-w-3xl mx-auto relative z-10">
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 mx-auto jarvis-card jarvis-glow-cyan flex items-center justify-center rounded-full mb-3">
+            <Sparkles className="text-jarvis-cyan h-6 w-6 animate-pulse" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-orbitron font-bold text-jarvis-cyan">Gratitude Matrix 🌌</h1>
+          <p className="text-muted-foreground mt-2 font-exo text-sm">Speak or type 3 things you're grateful for today</p>
         </div>
-      )}
-      {submitted && <XPRewardPopup xp={20} />}
-      {sentiments && <BloomCanvas sentiments={sentiments} />}
 
+        <div className="grid md:grid-cols-3 gap-6 mb-6">
+          {entries.map((entry, index) => (
+            <div key={index} className="jarvis-card p-4 rounded-2xl border-2 border-primary/30 bg-card/20 relative">
+              <textarea
+                className="w-full h-28 p-4 rounded-xl border border-primary/20 bg-background text-white resize-none font-exo placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-jarvis-cyan"
+                placeholder={`✨ Gratitude Thought #${index + 1}`}
+                value={entry}
+                onChange={(e) => {
+                  const updated = [...entries];
+                  updated[index] = e.target.value;
+                  setEntries(updated);
+                }}
+              />
+              <button
+                onClick={() => handleVoiceInput(index)}
+                className={`mt-3 px-4 py-2 text-sm rounded-lg border border-primary/30 w-full jarvis-glow-cyan text-jarvis-cyan font-orbitron hover:bg-card/30 transition-all ${listeningIndex === index ? "bg-card animate-pulse" : ""}`}
+              >
+                {listeningIndex === index ? "🎤 Listening..." : "🎙️ Speak Entry"}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="submit-button bg-gradient-to-r from-jarvis-cyan to-jarvis-blue px-6 py-3 text-white font-orbitron rounded-xl hover:scale-105 hover:jarvis-glow-cyan transition-all"
+          >
+            {loading ? "Analyzing..." : "Submit Gratitude"}
+          </button>
+        </div>
+
+        {submitted && (
+          <div className="mt-10 bg-card/30 p-6 rounded-xl jarvis-card border border-primary/20">
+            <h2 className="text-xl font-orbitron mb-2 text-jarvis-gold">🧠 Sentiment Scores:</h2>
+            <ul className="list-disc list-inside font-exo text-white mb-4">
+              {sentiments?.map((score, idx) => (
+                <li key={idx}>Gratitude #{idx + 1}: {score >= 0 ? "+" : ""}{score}</li>
+              ))}
+            </ul>
+
+            <h2 className="text-xl font-orbitron mb-2 text-jarvis-gold">🌸 AI Reflection:</h2>
+            <p className="text-muted-foreground font-exo italic">{summary}</p>
+          </div>
+        )}
+
+        {submitted && <XPRewardPopup xp={20} />}
+        {sentiments && <BloomCanvas sentiments={sentiments} />}
+      </div>
     </div>
   );
 };
