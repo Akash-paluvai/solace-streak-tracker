@@ -11,7 +11,7 @@ const generatePoeticSummary = async (entries) => {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "deepseek/deepseek-r1-0528:free", // You can also try other supported models
+        model: "deepseek/deepseek-r1-0528:free", 
         messages: [
           {
             role: "system",
