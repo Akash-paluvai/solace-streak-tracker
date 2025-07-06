@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Neural Breathing Protocol</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at center, #050d1f, #0a0f1c);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+    }
+
+    .breathing-container {
+      text-align: center;
+      color: #00fff7;
+      position: relative;
+    }
+
+    .circle {
+      width: 150px;
+      height: 150px;
+      margin: auto;
+      border-radius: 50%;
+      background: rgba(0, 255, 247, 0.15);
+      box-shadow: 0 0 25px #00fff7, 0 0 50px #00fff7 inset;
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+      50% {
+        transform: scale(1.5);
+        opacity: 1;
+      }
+    }
+
+    .text, .timer {
+      margin-top: 30px;
+      font-size: 1.5rem;
+      color: #e0e0e0;
+      animation: pulseText 6s ease-in-out infinite;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { color: #e0e0e0; }
+      50% { color: #00fff7; }
+    }
+
+    .light-beam {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      width: 4px;
+      height: 300%;
+      background: linear-gradient(to bottom, transparent 0%, #00e5ff88 50%, transparent 100%);
+      animation: scan 6s linear infinite;
+      z-index: 0;
+    }
+
+    .xp-earned {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #00ff99;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="breathing-container">
+    <div class="light-beam"></div>
+    <div class="circle"></div>
+    <div class="text" id="breatheText">Breathe In... Breathe Out</div>
+    <div class="timer" id="sessionTimer">5:00</div>
+    <div class="xp-earned" id="xpEarned">✅ +15 XP Earned</div>
+  </div>
+
+  <script>
+    let duration = 5 * 60; // 5 minutes
+    const timerDisplay = document.getElementById('sessionTimer');
+    const breatheText = document.getElementById('breatheText');
+    const xpEarned = document.getElementById('xpEarned');
+
+    function updateTimer() {
+      const minutes = Math.floor(duration / 60);
+      const seconds = duration % 60;
+      timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function startSession() {
+      const interval = setInterval(() => {
+        if (duration <= 0) {
+          clearInterval(interval);
+          timerDisplay.textContent = "Session Complete";
+          breatheText.textContent = "Great Job!";
+          xpEarned.style.display = "block";
+          // TODO: trigger backend API call to award XP
+        } else {
+          duration--;
+          updateTimer();
+        }
+      }, 1000);
+    }
+
+    updateTimer();
+    startSession();
+  </script>
+</body>
+</html>

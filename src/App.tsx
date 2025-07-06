@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,10 @@ import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+import NeuralBreathingPage from "./pages/NeuralBreathing"; 
+import GratitudeMatrixPage from "./pages/GratitudeMatrix";
+
+
 
 const queryClient = new QueryClient();
 
@@ -72,6 +75,44 @@ const App = () => (
                 </ProtectedRoute>
               } />
               <Route path="*" element={<NotFound />} />
+
+<Route path="/activity/neural-breathing" element={
+  <ProtectedRoute>
+    <NeuralBreathingPage/>
+  </ProtectedRoute>
+} />
+
+
+<Route path="/activity/gratitude-matrix" element={
+  <ProtectedRoute>
+    <GratitudeMatrixPage/>
+  </ProtectedRoute>
+} />
+
+{/* <Route path="/activity/progressive-muscle" element={
+  <ProtectedRoute>
+    <ProgressiveMusclePage />
+  </ProtectedRoute>
+} />
+
+<Route path="/activity/binaural-meditation" element={
+  <ProtectedRoute>
+    <BinauralMeditationPage />
+  </ProtectedRoute>
+} />
+<Route path="/activity/flexibility" element={
+  <ProtectedRoute>
+    <FlexibilityPage />
+  </ProtectedRoute>
+} />
+<Route path="/activity/neural-reinforcement" element={
+  <ProtectedRoute>
+    <NeuralReinforcementPage />
+  </ProtectedRoute>
+} /> */}
+
+
+
             </Routes>
             {/* MINDRA AI Assistant - Available globally */}
             <MindraAssistant />

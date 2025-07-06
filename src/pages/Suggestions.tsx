@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Heart, ArrowLeft, Clock, User, Brain, Sparkles, Zap, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Suggestions = () => {
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -105,9 +106,31 @@ const Suggestions = () => {
     ? suggestions 
     : suggestions.filter(s => s.category === selectedCategory);
 
-  const handleStartActivity = (suggestion: any) => {
-    console.log("Initiating protocol:", suggestion.title);
-  };
+ const navigate = useNavigate();
+ const handleStartActivity = (suggestion: any) => {
+  switch (suggestion.title) {
+    case "Neural Breathing Protocol":
+      navigate("/activity/neural-breathing");
+      break;
+    case "Gratitude Matrix Logging":
+      navigate("/activity/gratitude-matrix");
+      break;
+    case "Progressive Muscle Optimization":
+      navigate("/activity/progressive-muscle");
+      break;
+    case "Binaural Frequency Meditation":
+      navigate("/activity/binaural-meditation");
+      break;
+    case "Dynamic Flexibility Protocol":
+      navigate("/activity/flexibility");
+      break;
+    case "Positive Neural Reinforcement":
+      navigate("/activity/neural-reinforcement");
+      break;
+    default:
+      console.warn("No route defined for:", suggestion.title);
+  }
+};
 
   const handleSurpriseMe = () => {
     const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];

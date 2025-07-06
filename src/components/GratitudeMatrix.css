@@ -1,0 +1,33 @@
+.submit-button {
+  margin-top: 2rem;
+  background: linear-gradient(to right, #00fff7, #00bfff);
+  padding: 0.8rem 2rem;
+  color: black;
+  font-weight: bold;
+  font-family: Orbitron, sans-serif;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #00fff7;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to right, #00e5ff, #0099ff);
+}
+
+.response-placeholder {
+  margin-top: 2rem;
+  color: #fff;
+  font-family: Exo, sans-serif;
+  text-align: center;
+  font-size: 1.1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
