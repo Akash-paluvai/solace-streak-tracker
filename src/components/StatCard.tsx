@@ -1,4 +1,3 @@
-
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -65,3 +64,40 @@ export const StatCard = ({
     </Card>
   );
 };
+
+// Usage examples (move these to a separate file or your page/component where the variables and icons are defined)
+/*
+<StatCard
+  title="Current Streak"
+  value={currentStreak}
+  unit="days"
+  icon={Calendar}
+  trend="up"
+  glowColor="cyan"
+/>
+<StatCard
+  title="Total Check-ins"
+  value={totalCheckIns}
+  unit="all time"
+  icon={Heart}
+  trend="up"
+  glowColor="gold"
+/>
+<StatCard
+  title="Heart Rate"
+  value={latestHeartRate}
+  unit="bpm"
+  icon={Activity}
+  trend="neutral"
+  glowColor="cyan"
+/>
+<StatCard
+  title="Stress Level"
+  value={avgStress}
+  unit="/10"
+  icon={Brain}
+  trend="down"
+  glowColor="gold"
+/>
+*/
+

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,95 +30,29 @@ const MoodCheckIn = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedMood) {
-      toast({
-        title: "Neural Analysis Required",
-        description: "Please select your current emotional state",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please authenticate to sync neural data",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // Submit mood log
-      const { error: moodError } = await supabase
-        .from('mood_logs')
-        .insert({
-          user_id: user.id,
+      const response = await fetch('http://localhost:3000/api/mood', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user?.id, // make sure you have this value
           mood: selectedMood,
-          note: note || null
-        });
+          stressLevel: stressLevel,
+          note: note, // use the note state variable
+        }),
+      });
 
-      if (moodError) throw moodError;
-
-      const { error: stressError } = await supabase
-        .from('stress_logs')
-        .insert({
-          user_id: user.id,
-          stress_level: stressLevel[0],
-          trigger_note: note || null
-        });
-
-      if (stressError) throw stressError;
-
-      const today = new Date().toISOString().split('T')[0];
-      const { data: existingStreak } = await supabase
-        .from('streaks')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (existingStreak) {
-        const lastCheckin = existingStreak.last_checkin;
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split('T')[0];
-
-        let newStreak = 1;
-        if (lastCheckin === yesterdayStr) {
-          newStreak = existingStreak.current_streak + 1;
-        } else if (lastCheckin !== today) {
-          newStreak = 1;
-        } else {
-          newStreak = existingStreak.current_streak;
-        }
-
-        const { error: streakError } = await supabase
-          .from('streaks')
-          .update({
-            current_streak: newStreak,
-            last_checkin: today,
-            longest_streak: Math.max(newStreak, existingStreak.longest_streak)
-          })
-          .eq('user_id', user.id);
-
-        if (streakError) throw streakError;
+      if (!response.ok) {
+        throw new Error('Failed to submit mood');
       }
 
-      toast({
-        title: "Neural Data Synchronized! 🧠",
-        description: "Emotional state and stress metrics have been recorded",
-      });
-
-      navigate("/dashboard");
+      // Optionally handle the response
+      const data = await response.json();
+      // ...update UI, show success, etc...
     } catch (error) {
-      console.error('Error submitting check-in:', error);
-      toast({
-        title: "Synchronization Failed",
-        description: "Neural link interrupted. Please retry connection.",
-        variant: "destructive",
-      });
+      // ...handle error...
     } finally {
       setLoading(false);
     }
@@ -213,13 +146,14 @@ const MoodCheckIn = () => {
                         <span className="text-red-400">Critical (10)</span>
                       </div>
                       <Slider
-                        value={stressLevel}
-                        onValueChange={setStressLevel}
-                        max={10}
-                        min={1}
-                        step={1}
-                        className="w-full"
-                      />
+  value={stressLevel}
+  onValueChange={setStressLevel}
+  min={1}
+  max={10}
+  step={1}
+  className="w-full"
+/>
+
                       <div className="text-center">
                         <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full border ${
                           stressLevel[0] <= 3 ? 'border-jarvis-green/40 bg-jarvis-green/10 text-jarvis-green' :

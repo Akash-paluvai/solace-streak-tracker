@@ -1,6 +1,6 @@
-
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface HealthCoreProps {
   mood?: string;
@@ -75,3 +75,41 @@ export const HealthCore = ({
     </div>
   );
 };
+
+// Example values for demonstration; replace with your actual state or props as needed
+const latestMood = "neutral";
+const latestHeartRate = 72;
+
+const HealthCoreDemo = () => {
+  const [latestMood, setLatestMood] = useState("neutral");
+  const [latestHeartRate, setLatestHeartRate] = useState(72);
+
+  return (
+    <div className="flex flex-col gap-4 items-center">
+      <HealthCore mood={latestMood} size="sm" heartRate={latestHeartRate} />
+      <div className="flex gap-2">
+        <button onClick={() => setLatestMood("happy")}>Happy</button>
+        <button onClick={() => setLatestMood("sad")}>Sad</button>
+        <button onClick={() => setLatestMood("anxious")}>Anxious</button>
+        <button onClick={() => setLatestMood("calm")}>Calm</button>
+        <button onClick={() => setLatestMood("neutral")}>Neutral</button>
+      </div>
+      <div>
+        <label>
+          Heart Rate:{" "}
+          <input
+            type="number"
+            value={latestHeartRate}
+            onChange={e => setLatestHeartRate(Number(e.target.value))}
+            min={40}
+            max={200}
+            className="border px-2 py-1 rounded"
+          />
+        </label>
+      </div>
+    </div>
+  );
+};
+
+// Replace the static example with the dynamic demo
+export default HealthCoreDemo;
